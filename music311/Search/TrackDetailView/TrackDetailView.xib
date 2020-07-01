@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -140,6 +140,7 @@
                 <outlet property="playPauseButton" destination="0v1-8E-4Lk" id="dW5-ZF-hyc"/>
                 <outlet property="trackImageView" destination="Ml2-5a-Kqy" id="n7T-Zr-xnJ"/>
                 <outlet property="trackTitleLabel" destination="NE7-Vc-KVq" id="3Ub-cb-nLP"/>
+                <outlet property="volumeSlider" destination="Fes-jE-Hry" id="qkc-eQ-01u"/>
             </connections>
             <point key="canvasLocation" x="508.69565217391306" y="-178.125"/>
         </view>

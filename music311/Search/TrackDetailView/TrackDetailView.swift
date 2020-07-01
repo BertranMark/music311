@@ -10,6 +10,13 @@ import UIKit
 import SDWebImage
 import AVKit
 
+protocol TrackMovingDelegate: class {
+    
+    func moveBackForPreviousTrack() -> SearchViewmodel.Cell?
+    func moveForwardForPreviousTrack() -> SearchViewmodel.Cell?
+
+}
+
 class TrackDetailView: UIView {
     
     
@@ -18,6 +25,7 @@ class TrackDetailView: UIView {
 
     @IBOutlet weak var currentTimeSlider: UISlider!
 
+    @IBOutlet weak var volumeSlider: UISlider!
     @IBOutlet weak var currentTimeLabel: UILabel!
 
     @IBOutlet weak var durationLabel: UILabel!
@@ -28,7 +36,7 @@ class TrackDetailView: UIView {
 
     @IBOutlet weak var playPauseButton: UIButton!
     
-    
+    weak var delegate: TrackMovingDelegate?
     
     let player: AVPlayer = {
         let avPlayer = AVPlayer()
@@ -92,7 +100,15 @@ class TrackDetailView: UIView {
             let durationTime = self?.player.currentItem?.duration
             let currentDurText = ((durationTime ?? CMTimeMake(value: 1, timescale: 1)) - time).toDisplayString()
             self?.durationLabel.text = currentDurText
+            self?.updateCurrentTimeSlider()
         }
+    }
+    
+    private func updateCurrentTimeSlider() {
+        let currentTimeSeconds = CMTimeGetSeconds(player.currentTime())
+        let durationSeconds = CMTimeGetSeconds((player.currentItem?.duration) ?? CMTimeMake(value: 1, timescale: 1))
+        let percentage = currentTimeSeconds / durationSeconds
+        currentTimeSlider.value = Float(percentage)
     }
     
     // MARK: - Animations
@@ -102,6 +118,9 @@ class TrackDetailView: UIView {
             
             self.trackImageView.transform = .identity
             
+            
+            // увеличить картику пружинкой .curveEaseInOut
+            
         }, completion: nil)
     }
     
@@ -110,6 +129,8 @@ class TrackDetailView: UIView {
             
            let scale : CGFloat = 0.8
             self.trackImageView.transform = CGAffineTransform(scaleX: scale, y: scale)
+            
+            // уменьшить картинку на 20% пружинкой
             
         }, completion: nil)
     }
@@ -121,14 +142,29 @@ class TrackDetailView: UIView {
     }
 
     @IBAction func handleVolumeSlider(_ sender: Any) {
+        
+        player.volume = volumeSlider.value
     }
+     
     @IBAction func handleCurrentTimeSlider(_ sender: Any) {
+        let percentage = currentTimeSlider.value
+        guard let duration = player.currentItem?.duration else { return }
+        let durInSec = CMTimeGetSeconds(duration)
+        let seekTimeSec = Float64(percentage) * durInSec
+        let seekTime = CMTimeMakeWithSeconds(seekTimeSec, preferredTimescale: 1)
+        player.seek(to: seekTime)
+        
+        // запускается когда пользователь прокурчивает слайдер. Подумать как сделать так, чтобы запуск происходил только во время отпускания пальца, иначе система каждое микроскопичекое движение будет выполнять этот метод, лишняя нагрузка
     }
 
     @IBAction func previousTrack(_ sender: Any) {
+        guard let cellModel = delegate?.moveBackForPreviousTrack() else { return }
+        self.set(viewModel: cellModel)
     }
 
     @IBAction func nextTrack(_ sender: Any) {
+        guard let cellModel = delegate?.moveForwardForPreviousTrack() else { return }
+        self.set(viewModel: cellModel)
     }
 
     @IBAction func playPauseAction(_ sender: Any) {
